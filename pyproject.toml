@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "soundvision"
+version = "1.0.0"
+description = "SoundVision AI: Environmental Sound Classification using Deep Learning and Transfer Learning"
+authors = [{ name = "SoundVision AI Team" }]
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Multimedia :: Sound/Audio :: Analysis",
+]
+dependencies = [
+    "torch>=2.2.0",
+    "torchvision>=0.17.0",
+    "torchaudio>=2.2.0",
+    "numpy>=1.24.0,<2.0.0",
+    "scipy>=1.10.0",
+    "pandas>=2.0.0",
+    "scikit-learn>=1.3.0",
+    "librosa>=0.10.0",
+    "soundfile>=0.12.1",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.65.0",
+    "requests>=2.31.0",
+    "streamlit>=1.30.0",
+    "pytest>=7.4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--basetemp=.pytest_temp"
+
+

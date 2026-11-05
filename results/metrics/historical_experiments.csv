@@ -1,0 +1,6 @@
+experiment_id,paradigm,architecture,pretrained,learning_rate_head,learning_rate_backbone,batch_size,epochs_trained,best_val_accuracy,test_accuracy,notes
+hist_colab_scratch,scratch,resnet18,False,0.001,0.001,16,30,0.6125,0.4625,"Google Colab baseline - trained from scratch without pretraining"
+hist_colab_feat_ext_v1,feature_extraction,resnet18,True,0.001,0.0,16,30,0.1250,0.1000,"Google Colab baseline - suffered exploding loss due to unnormalized dB spectrograms"
+hist_colab_finetune_v1,fine_tuning,resnet18,True,0.001,0.0001,16,30,0.8625,0.7000,"Google Colab baseline - initial fine-tuning"
+hist_colab_feat_ext_v2,feature_extraction,resnet18,True,0.001,0.0,16,30,0.7875,NaN,"Google Colab improved - normalized inputs and tuned head"
+hist_colab_finetune_v2,fine_tuning,resnet18,True,0.001,0.0001,16,30,0.9000,NaN,"Google Colab improved - SpecAugment, AdamW, discriminative LR, untested on Fold 5"

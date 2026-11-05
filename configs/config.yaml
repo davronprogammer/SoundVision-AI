@@ -1,0 +1,81 @@
+# SoundVision AI - Configuration
+project:
+  name: "SoundVision-AI"
+  description: "Environmental Sound Classification using Deep Learning and Transfer Learning"
+  version: "1.0.0"
+  seed: 42
+
+dataset:
+  name: "ESC-50"
+  repo_url: "https://github.com/karolpiczak/ESC-50/archive/master.zip"
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  meta_csv: "data/raw/ESC-50-master/meta/esc50.csv"
+  audio_dir: "data/raw/ESC-50-master/audio"
+  classes:
+    - "dog"
+    - "thunderstorm"
+    - "fireworks"
+    - "airplane"
+    - "train"
+    - "sheep"
+    - "wind"
+    - "frog"
+    - "helicopter"
+    - "laughing"
+  sample_rate: 22050
+  target_duration_sec: 5.0
+  folds:
+    train: [1, 2, 3]
+    val: [4]
+    test: [5]
+
+preprocessing:
+  sample_rate: 22050
+  n_fft: 1024
+  hop_length: 512
+  n_mels: 128
+  f_min: 0.0
+  f_max: 11025.0
+  top_db: 80.0
+  in_channels: 3  # Repeat single channel mel-spectrogram to 3 channels for ResNet
+  norm_mean: null  # Calculated dynamically from training folds
+  norm_std: null   # Calculated dynamically from training folds
+
+augmentation:
+  enabled: true
+  time_mask_max_len: 24
+  freq_mask_max_len: 16
+  num_time_masks: 2
+  num_freq_masks: 2
+  gain_range: [-3.0, 3.0]
+  time_shift_max_ratio: 0.1
+
+model:
+  backbone: "resnet18"
+  pretrained: true
+  num_classes: 10
+  dropout: 0.3
+
+training:
+  batch_size: 16
+  num_workers: 0  # Safe for Windows multiprocessing
+  epochs: 30
+  early_stopping_patience: 10
+  gradient_clip_norm: 1.0
+  label_smoothing: 0.05
+  learning_rate:
+    backbone: 1.0e-4
+    head: 1.0e-3
+  weight_decay: 1.0e-4
+  scheduler:
+    name: "CosineAnnealingLR"
+    t_max: 30
+    min_lr: 1.0e-6
+
+paths:
+  checkpoints_dir: "models/checkpoints"
+  final_model_dir: "models/final"
+  figures_dir: "results/figures"
+  metrics_dir: "results/metrics"
+  predictions_dir: "results/predictions"

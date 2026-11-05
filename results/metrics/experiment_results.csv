@@ -1,0 +1,3 @@
+experiment_id,paradigm,architecture,pretrained,learning_rate_head,learning_rate_backbone,batch_size,epochs_trained,best_val_accuracy,best_val_loss,best_val_f1,duration_seconds,checkpoint_path
+scratch_20261105_143437,scratch,resnet18,False,0.001,0.0,16,25,0.7,4.566,0.6705,829.17,models\checkpoints\scratch_20261105_143437\scratch_20261105_143437.pth
+feature_extraction_20261105_144945,feature_extraction,resnet18,True,0.001,0.0,16,17,0.1,11.8704,0.0661,190.74,models\checkpoints\feature_extraction_20261105_144945\feature_extraction_20261105_144945.pth

@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Audio & Dataset raw archives (keep processed metadata/index, ignore large audio zips)
+data/raw/*.zip
+data/raw/*.tar.gz
+data/raw/ESC-50-master/
+data/raw/ESC-50-clone/
+
+# PyTorch checkpoints and weight files (large binaries >100MB)
+models/**/*.pt
+models/**/*.pth
+models/checkpoints/
+models/final/*.pth
+
+
+# Streamlit
+.streamlit/
+
+# Test and coverage
+.pytest_cache/
+.pytest_temp/
+.coverage
+htmlcov/
