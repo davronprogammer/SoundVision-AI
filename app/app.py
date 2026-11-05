@@ -2,6 +2,16 @@
 
 import json
 from pathlib import Path
+import sys
+
+# Ensure both project root and app dir are in sys.path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+APP_DIR = Path(__file__).resolve().parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+if str(APP_DIR) not in sys.path:
+    sys.path.insert(0, str(APP_DIR))
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,7 +19,11 @@ import soundfile as sf
 import streamlit as st
 import torch
 
-from app.components.ui import apply_custom_css, plot_waveform_and_spectrogram
+try:
+    from components.ui import apply_custom_css, plot_waveform_and_spectrogram
+except (ModuleNotFoundError, ImportError):
+    from app.components.ui import apply_custom_css, plot_waveform_and_spectrogram
+
 from soundvision.config import load_config
 from soundvision.data.dataset import SELECTED_CLASSES
 from soundvision.data.preprocessing import AudioPreprocessor
