@@ -12,14 +12,27 @@ All models are trained with fixed seeds (`seed=42`), identical audio preprocessi
 
 ## 2. Experimental Paradigm Comparison
 
-| Model Experiment | Paradigm | Pretrained Weights | Best Val Accuracy | Test Accuracy (Held-out Fold 5) | Macro F1 (Test) |
-|:---|:---|:---:|---:|---:|---:|
-| **Baseline A** | ResNet-18 From Scratch | None (Random) | 61.25% | 46.25% | 0.4410 |
-| **Baseline B (Hist)** | ResNet-18 Feature Ext (Unnormalized) | ImageNet | 12.50% | 10.00% | 0.0820 |
-| **Experiment B (V2)** | ResNet-18 Feature Ext (Normalized + Tuned) | ImageNet | 78.75% | Evaluated | Evaluated |
-| **Experiment C (V2)** | ResNet-18 Fine-Tuning (Full Pipeline) | ImageNet | 90.00% | Evaluated | Evaluated |
+The table below contrasts historical Google Colab experiments with our locally reproduced and evaluated runs on official ESC-50 splits:
 
-*(Note: Official experimental logs are recorded in `results/metrics/experiment_results.csv` and `results/metrics/test_metrics.json` upon execution).*
+### A. Locally Executed & Evaluated Benchmarks (Zero Data Leakage)
+
+| Model Experiment | Paradigm | Pretrained Weights | Best Val Accuracy | Best Val Macro F1 | Test Accuracy (Fold 5) | Test Macro F1 | Status |
+|:---|:---|:---:|---:|---:|---:|---:|:---:|
+| **Experiment A** | ResNet-18 From Scratch | None (Random) | 70.00% | 67.05% | 55.00% | 51.14% | Complete (25 ep) |
+| **Experiment B** | ResNet-18 Feature Extraction | ImageNet-1K | 10.00% | 6.61% | N/A | N/A | Early Stopped (ep 17) |
+| **Experiment C** | ResNet-18 Fine-Tuning (Production) | ImageNet-1K | **75.00%** | **73.68%** | **78.75%** | **75.82%** | Complete (Best ep 13) |
+
+### B. Historical Google Colab Reference Experiments
+
+| Model Experiment | Best Validation Accuracy | Test Accuracy | Note |
+|:---|---:|---:|:---|
+| ResNet-18 from scratch | 61.25% | 46.25% | Baseline random initialization |
+| Feature extraction (Baseline) | 12.50% | 10.00% | Suffered initial exploding loss due to unnormalized dB inputs |
+| Fine-tuning (Baseline) | 86.25% | 70.00% | Pretrained ImageNet with uncalibrated head |
+| Feature extraction V2 | 78.75% | Not evaluated on test | Added training-set normalization |
+| Fine-tuning V2 | 90.00% | Not evaluated on test | Colab run with aggressive tuning |
+
+*(All verified local runs are preserved in `results/metrics/experiment_results.csv` and `results/metrics/test_metrics.json`).*
 
 ---
 
