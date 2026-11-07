@@ -1,5 +1,6 @@
 """SoundVision AI — Environmental Sound Intelligence Web Application."""
 
+import io
 import json
 from pathlib import Path
 import sys
@@ -21,11 +22,7 @@ import soundfile as sf
 import streamlit as st
 import torch
 
-try:
-    from components.ui import apply_custom_css, plot_waveform_and_spectrogram
-except (ModuleNotFoundError, ImportError):
-    from app.components.ui import apply_custom_css, plot_waveform_and_spectrogram
-
+from components.ui import apply_custom_css, plot_waveform_and_spectrogram
 from soundvision.config import load_config
 from soundvision.data.dataset import SELECTED_CLASSES
 from soundvision.data.preprocessing import AudioPreprocessor
@@ -49,8 +46,8 @@ def get_predictor(checkpoint_path: str):
     return AudioPredictor(checkpoint_path=checkpoint_path, device="cpu")
 
 
-cfg = load_config()
-default_checkpoint = "models/final/soundvision_resnet18.pth"
+cfg = load_config(str(PROJECT_ROOT / "configs" / "config.yaml"))
+default_checkpoint = str(PROJECT_ROOT / "models" / "final" / "soundvision_resnet18.pth")
 predictor = get_predictor(default_checkpoint)
 
 # Sidebar
@@ -150,8 +147,8 @@ elif app_mode == "Audio Classifier":
             if uploaded_file is not None:
                 audio_source = uploaded_file
         else:
-            audio_dir = Path("data/raw/ESC-50-master/audio")
-            meta_path = Path("data/raw/ESC-50-master/meta/esc50.csv")
+            audio_dir = PROJECT_ROOT / "data" / "raw" / "ESC-50-master" / "audio"
+            meta_path = PROJECT_ROOT / "data" / "raw" / "ESC-50-master" / "meta" / "esc50.csv"
             if meta_path.is_file() and audio_dir.is_dir():
                 df = pd.read_csv(meta_path)
                 subset = df[df["category"].isin(SELECTED_CLASSES)]
@@ -242,8 +239,8 @@ elif app_mode == "Evaluation Dashboard":
         unsafe_allow_html=True,
     )
 
-    metrics_file = Path("results/metrics/test_metrics.json")
-    exp_csv_file = Path("results/metrics/experiment_results.csv")
+    metrics_file = PROJECT_ROOT / "results" / "metrics" / "test_metrics.json"
+    exp_csv_file = PROJECT_ROOT / "results" / "metrics" / "experiment_results.csv"
 
     if metrics_file.is_file():
         with open(metrics_file, "r") as f:
@@ -286,8 +283,8 @@ elif app_mode == "Evaluation Dashboard":
     st.markdown("### Performance Visualizations")
     col_cm, col_f1 = st.columns(2)
 
-    cm_img_path = Path("results/figures/confusion_matrix_test.png")
-    f1_img_path = Path("results/figures/per_class_f1_test.png")
+    cm_img_path = PROJECT_ROOT / "results" / "figures" / "confusion_matrix_test.png"
+    f1_img_path = PROJECT_ROOT / "results" / "figures" / "per_class_f1_test.png"
 
     with col_cm:
         if cm_img_path.is_file():
