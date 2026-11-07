@@ -176,3 +176,92 @@ class AudioPredictor:
                 "and should not be interpreted as calibrated open-world sound detection probability."
             ),
         }
+
+    def predict_timeline(
+        self,
+        audio_input: Union[str, Path, np.ndarray, torch.Tensor],
+        window_sec: float = 5.0,
+        hop_sec: float = 2.5,
+    ) -> List[Dict[str, Any]]:
+        """Segments audio into temporal sliding windows and predicts class for each window.
+
+        Args:
+            audio_input: Path to audio file or raw audio array/tensor.
+            window_sec: Duration of each analysis window in seconds (default: 5.0s).
+            hop_sec: Step size between consecutive analysis windows in seconds (default: 2.5s).
+
+        Returns:
+            List of dictionaries with window time boundaries, top predicted class, confidence,
+            and complete class probability distribution.
+        """
+        # Standardize input to mono waveform tensor at self.sample_rate
+        if isinstance(audio_input, (str, Path)):
+            waveform, _ = self.preprocessor.load_audio(audio_input)
+        elif isinstance(audio_input, np.ndarray):
+            if audio_input.ndim == 1:
+                waveform = torch.from_numpy(audio_input).float().unsqueeze(0)
+            elif audio_input.ndim == 2:
+                mono = np.mean(audio_input, axis=0 if audio_input.shape[0] < audio_input.shape[1] else 1)
+                waveform = torch.from_numpy(mono).float().unsqueeze(0)
+            else:
+                raise ValueError(f"Expected 1D or 2D audio array, got ndim={audio_input.ndim}")
+        elif isinstance(audio_input, torch.Tensor):
+            if audio_input.ndim == 1:
+                waveform = audio_input.unsqueeze(0).float()
+            elif audio_input.ndim == 2:
+                waveform = audio_input.mean(dim=0, keepdim=True).float() if audio_input.shape[0] > 1 else audio_input.float()
+            else:
+                raise ValueError(f"Expected 1D or 2D tensor, got shape={audio_input.shape}")
+        else:
+            raise TypeError(f"Unsupported audio_input type: {type(audio_input)}")
+
+        total_samples = waveform.shape[-1]
+        sr = self.sample_rate
+        duration_sec = total_samples / sr
+        window_samples = int(window_sec * sr)
+        hop_samples = max(int(hop_sec * sr), 1)
+
+        windows_info = []
+        if total_samples <= window_samples:
+            adjusted = self.preprocessor.adjust_duration(waveform)
+            windows_info.append((0.0, duration_sec, adjusted))
+        else:
+            for start in range(0, total_samples - window_samples + 1, hop_samples):
+                t_start = start / sr
+                t_end = min((start + window_samples) / sr, duration_sec)
+                chunk = waveform[..., start : start + window_samples]
+                windows_info.append((t_start, t_end, chunk))
+            # Tail window if remainder
+            if (total_samples - window_samples) % hop_samples != 0:
+                t_start = max(0.0, duration_sec - window_sec)
+                chunk = waveform[..., total_samples - window_samples : total_samples]
+                windows_info.append((t_start, duration_sec, chunk))
+
+        # Run batched inference on all windows
+        mel_tensors = []
+        for _, _, chunk in windows_info:
+            mel_db = self.preprocessor.extract_mel_spectrogram(chunk)
+            mel_norm = self.preprocessor.normalize(mel_db)
+            feat = self.preprocessor.to_multi_channel(mel_norm)
+            mel_tensors.append(feat)
+
+        batch_tensors = torch.stack(mel_tensors, dim=0).to(self.device)
+        with torch.no_grad():
+            logits = self.model(batch_tensors)
+            probs = F.softmax(logits, dim=1).cpu().numpy()
+
+        results = []
+        for i, (t_start, t_end, _) in enumerate(windows_info):
+            win_probs = probs[i]
+            best_idx = int(np.argmax(win_probs))
+            results.append({
+                "start_sec": round(t_start, 2),
+                "end_sec": round(t_end, 2),
+                "predicted_class": self.class_names[best_idx],
+                "confidence": float(round(float(win_probs[best_idx]), 4)),
+                "probabilities": {
+                    cls_name: float(round(float(win_probs[c_idx]), 4))
+                    for c_idx, cls_name in enumerate(self.class_names)
+                },
+            })
+        return results
