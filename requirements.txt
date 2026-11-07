@@ -1,10 +1,12 @@
-# Deep Learning Framework
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Deep Learning Framework (CPU builds for fast Cloud deploy)
 torch>=2.2.0
 torchvision>=0.17.0
 torchaudio>=2.2.0
 
 # Scientific Computing & Audio Processing
-numpy>=1.24.0,<2.0.0
+numpy>=1.24.0
 scipy>=1.10.0
 pandas>=2.0.0
 scikit-learn>=1.3.0
@@ -21,7 +23,7 @@ tqdm>=4.65.0
 requests>=2.31.0
 
 # Web Application
-streamlit>=1.30.0
+streamlit>=1.39.0
 
 # Testing & Quality
 pytest>=7.4.0

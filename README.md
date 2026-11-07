@@ -23,9 +23,10 @@ A deep learning and transfer learning product for **Environmental Sound Classifi
 - [10. Interactive Streamlit Web Application](#10-interactive-streamlit-web-application)
 - [11. Project Structure](#11-project-structure)
 - [12. Quickstart & Installation Guide](#12-quickstart--installation-guide)
-- [13. Automated Testing Suite](#13-automated-testing-suite)
-- [14. Known Limitations & Failure Modes](#14-known-limitations--failure-modes)
-- [15. References & Attribution](#15-references--attribution)
+- [13. Deploy to Streamlit Cloud](#13-deploy-to-streamlit-cloud)
+- [14. Automated Testing Suite](#14-automated-testing-suite)
+- [15. Known Limitations & Failure Modes](#15-known-limitations--failure-modes)
+- [16. References & Attribution](#16-references--attribution)
 
 ---
 
@@ -319,7 +320,26 @@ streamlit run app/app.py
 
 ---
 
-## 13. Automated Testing Suite
+## 13. Deploy to Streamlit Cloud
+
+To deploy SoundVision AI to Streamlit Community Cloud:
+
+1. **Repository Settings**:
+   - **Repository**: `davronprogammer/SoundVision-AI`
+   - **Branch**: `main`
+   - **Main file path**: `app/app.py`
+2. **Advanced Settings**:
+   - Select **Python 3.11** or **Python 3.12**.
+3. **Automatic System & Python Dependencies**:
+   - `packages.txt` automatically installs `libsndfile1` and `ffmpeg` (required for Linux system audio decoding).
+   - `requirements.txt` installs CPU-optimized PyTorch wheels and scientific libraries.
+   - The lightweight production model `models/final/soundvision_resnet18.pth` (42.7 MB) is included in the repository and loads automatically on startup.
+4. **Rebooting after Push**:
+   - After pushing commits to `main`, click **Manage app** in the bottom-right corner of your Streamlit Cloud interface and select **Reboot app**.
+
+---
+
+## 14. Automated Testing Suite
 
 Execute the test suite with:
 ```powershell
@@ -337,7 +357,7 @@ The test suite covers:
 
 ---
 
-## 14. Known Limitations & Failure Modes
+## 15. Known Limitations & Failure Modes
 
 - **Closed-World Constraint**: The model assumes audio belongs to one of its 10 trained classes. Out-of-distribution sounds will be mapped to the closest internal embedding.
 - **Spectral Overlap**: Ambient turbulence (`wind`) and distant thunder rumbles (`thunderstorm`) share low-pass frequency characteristics that occasionally cause misclassifications.
@@ -345,7 +365,7 @@ The test suite covers:
 
 ---
 
-## 15. References & Attribution
+## 16. References & Attribution
 
 - **ESC-50 Dataset**: Piczak, Karol J. *"ESC: Dataset for Environmental Sound Classification"*, Proceedings of the 23rd ACM International Conference on Multimedia, 2015. [GitHub Repository](https://github.com/karolpiczak/ESC-50)
 - **Deep Residual Learning**: He, Kaiming, et al. *"Deep Residual Learning for Image Recognition"*, CVPR 2016.
