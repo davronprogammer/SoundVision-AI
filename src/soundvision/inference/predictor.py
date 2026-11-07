@@ -36,7 +36,12 @@ class AudioPredictor:
     def _load_checkpoint(self) -> None:
         """Loads model weights, preprocessing statistics, and class definitions."""
         try:
-            checkpoint = torch.load(self.checkpoint_path, map_location=self.device, weights_only=False)
+            # First attempt secure weights_only=True loading (recommended for PyTorch >= 2.6)
+            try:
+                checkpoint = torch.load(self.checkpoint_path, map_location=self.device, weights_only=True)
+            except Exception:
+                # Fallback to weights_only=False for backward compatibility with full training checkpoints
+                checkpoint = torch.load(self.checkpoint_path, map_location=self.device, weights_only=False)
         except Exception as e:
             raise RuntimeError(f"Failed to load checkpoint at '{self.checkpoint_path}': {e}") from e
 
