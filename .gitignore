@@ -47,6 +47,7 @@ models/**/*.pt
 models/**/*.pth
 models/checkpoints/
 models/final/*.pth
+!models/final/soundvision_resnet18.pth
 
 
 # Streamlit

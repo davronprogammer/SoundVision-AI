@@ -4,13 +4,15 @@ import json
 from pathlib import Path
 import sys
 
-# Ensure both project root and app dir are in sys.path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+# Ensure project root, src, and app dir are in sys.path
 APP_DIR = Path(__file__).resolve().parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-if str(APP_DIR) not in sys.path:
-    sys.path.insert(0, str(APP_DIR))
+PROJECT_ROOT = APP_DIR.parent
+SRC_DIR = PROJECT_ROOT / "src"
+
+for directory in (SRC_DIR, PROJECT_ROOT, APP_DIR):
+    dir_str = str(directory)
+    if dir_str not in sys.path:
+        sys.path.insert(0, dir_str)
 
 import matplotlib.pyplot as plt
 import numpy as np
