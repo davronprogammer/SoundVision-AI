@@ -52,6 +52,7 @@ models/final/*.pth
 
 # Streamlit
 .streamlit/
+!.streamlit/config.toml
 
 # Test and coverage
 .pytest_cache/
