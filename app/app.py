@@ -1,16 +1,16 @@
 """SoundVision AI — Environmental Sound Intelligence Web Application."""
 
+import io
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
-# Ensure both project root and app dir are in sys.path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
 APP_DIR = Path(__file__).resolve().parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-if str(APP_DIR) not in sys.path:
-    sys.path.insert(0, str(APP_DIR))
+PROJECT_ROOT = APP_DIR.parent
+SRC_DIR = PROJECT_ROOT / "src"
+for p in (SRC_DIR, PROJECT_ROOT, APP_DIR):
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,11 +19,7 @@ import soundfile as sf
 import streamlit as st
 import torch
 
-try:
-    from components.ui import apply_custom_css, plot_waveform_and_spectrogram
-except (ModuleNotFoundError, ImportError):
-    from app.components.ui import apply_custom_css, plot_waveform_and_spectrogram
-
+from components.ui import apply_custom_css, plot_waveform_and_spectrogram
 from soundvision.config import load_config
 from soundvision.data.dataset import SELECTED_CLASSES
 from soundvision.data.preprocessing import AudioPreprocessor
