@@ -51,7 +51,7 @@ models/final/*.pth
 
 
 # Streamlit
-.streamlit/
+.streamlit/*
 !.streamlit/config.toml
 
 # Test and coverage
